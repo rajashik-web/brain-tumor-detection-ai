@@ -1,0 +1,546 @@
+/* ============================================================
+   Brain Tumor Detection AI — Design Tokens & Global Styles
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@600;700;800;900&display=swap');
+
+:root {
+  --bg: #07111F;
+  --surface: #111827;
+  --card: #182235;
+  --primary: #4F8CFF;
+  --primary-2: #2F6FEF;
+  --success: #3DDC84;
+  --warning: #FFB547;
+  --danger: #FF5C5C;
+  --text: #F8FAFC;
+  --text-secondary: #94A3B8;
+  --border: rgba(255, 255, 255, 0.08);
+  --radius: 22px;
+  --spacing: 26px;
+  --shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+}
+
+html, body, [class*="css"] {
+  font-family: 'Manrope', sans-serif;
+  color: var(--text);
+}
+
+#MainMenu, footer, header[data-testid="stHeader"] { visibility: hidden; }
+
+.stApp {
+  background:
+    radial-gradient(1200px 600px at 15% -10%, rgba(79, 140, 255, 0.16), transparent 60%),
+    radial-gradient(1000px 700px at 105% 15%, rgba(61, 220, 132, 0.06), transparent 55%),
+    var(--bg);
+}
+
+.block-container {
+  padding-top: 1.6rem;
+  padding-bottom: 2.5rem;
+  max-width: 1180px;
+}
+
+[data-testid="stVerticalBlock"] { gap: 0.85rem; }
+
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   Card shell — applied to every card that wraps real Streamlit
+   widgets (file_uploader, image, button, expander content).
+
+   These cards use st.container(key="...", border=True). border=True
+   guarantees Streamlit always renders the bordered wrapper DOM node.
+   We then style BOTH the direct key class AND the :has()-matched
+   wrapper, because which element actually receives the class can
+   vary — targeting only one left an empty styled box floating above
+   unstyled content in an earlier revision. Targeting both is
+   redundant-by-design, not a mistake.
+   ============================================================ */
+.st-key-upload_hero,
+.st-key-scan_preview,
+.st-key-prediction_panel,
+.st-key-probability_bars,
+.st-key-clinical_summary,
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.st-key-upload_hero),
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.st-key-scan_preview),
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.st-key-prediction_panel),
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.st-key-probability_bars),
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.st-key-clinical_summary) {
+  background: var(--card) !important;
+  background-image: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0)) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius) !important;
+  padding: var(--spacing) !important;
+  box-shadow: var(--shadow) !important;
+  margin-bottom: var(--spacing);
+  animation: fadeSlideUp 0.5s ease both;
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.st-key-upload_hero:hover,
+.st-key-scan_preview:hover,
+.st-key-prediction_panel:hover,
+.st-key-probability_bars:hover,
+.st-key-clinical_summary:hover {
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.5);
+}
+
+/* Cards built as one plain HTML block (no real widgets inside) still
+   use this class directly. */
+.glass-card {
+  background: var(--card);
+  background-image: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--spacing);
+  box-shadow: var(--shadow);
+  margin-bottom: var(--spacing);
+  animation: fadeSlideUp 0.5s ease both;
+}
+
+.card-title {
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  font-size: 1.02rem;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text);
+}
+
+/* ---------------- Header ---------------- */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding: 4px 2px 22px 2px;
+}
+
+.brand { display: flex; align-items: center; gap: 14px; }
+
+.brand-mark {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  box-shadow: 0 8px 22px rgba(79, 140, 255, 0.35);
+}
+
+.brand-title {
+  font-family: 'Sora', sans-serif;
+  font-weight: 800;
+  font-size: 1.4rem;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.brand-subtitle {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  margin: 2px 0 0 0;
+}
+
+.status-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.status-online {
+  background: rgba(61, 220, 132, 0.12);
+  border: 1px solid rgba(61, 220, 132, 0.4);
+  color: var(--success);
+}
+
+.status-offline {
+  background: rgba(255, 92, 92, 0.12);
+  border: 1px solid rgba(255, 92, 92, 0.4);
+  color: var(--danger);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 8px currentColor;
+  animation: pulse 1.8s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+/* ---------------- Upload Hero ---------------- */
+.st-key-upload_hero {
+  text-align: center;
+  padding: 52px 48px !important;
+}
+
+.hero-eyebrow {
+  color: var(--primary);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  margin-bottom: 10px;
+}
+
+.hero-title {
+  font-family: 'Sora', sans-serif;
+  font-weight: 800;
+  font-size: 2.1rem;
+  letter-spacing: -0.02em;
+  margin: 0 0 12px 0;
+  background: linear-gradient(135deg, #FFFFFF, var(--primary) 140%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hero-subtitle {
+  color: var(--text-secondary);
+  font-size: 0.98rem;
+  max-width: 520px;
+  margin: 0 auto 28px auto;
+  line-height: 1.6;
+}
+
+.hero-hint {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  margin-top: 10px;
+}
+
+[data-testid="stFileUploaderDropzone"] {
+  background: rgba(79, 140, 255, 0.04) !important;
+  border: 1.5px dashed rgba(79, 140, 255, 0.45) !important;
+  border-radius: 18px !important;
+  min-height: 180px;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+[data-testid="stFileUploaderDropzone"]:hover {
+  border-color: var(--primary) !important;
+  background: rgba(79, 140, 255, 0.08) !important;
+}
+
+[data-testid="stFileUploaderDropzone"] * { color: var(--text-secondary) !important; }
+
+.hero-ready-label {
+  color: var(--primary);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.hero-filename {
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 16px;
+  word-break: break-all;
+}
+
+/* ---------------- Buttons ---------------- */
+div.stButton > button {
+  width: 100%;
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  color: white;
+  border: none;
+  border-radius: 14px;
+  padding: 0.75rem 1.1rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  box-shadow: 0 10px 26px rgba(79, 140, 255, 0.35);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+div.stButton > button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 32px rgba(79, 140, 255, 0.5);
+  color: white;
+}
+
+div.stButton > button:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* Secondary "start over" button on the scan preview card */
+.st-key-scan_preview div.stButton > button {
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: none;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+.st-key-scan_preview div.stButton > button:hover:not(:disabled) {
+  color: var(--text);
+  border-color: var(--primary);
+  box-shadow: none;
+  transform: none;
+}
+
+.scan-filename {
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  margin: 10px 0 4px 0;
+  text-align: center;
+}
+
+/* ---------------- Prediction Panel ---------------- */
+.prediction-headline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Sora', sans-serif;
+  font-weight: 800;
+  font-size: 1.5rem;
+  margin-bottom: 18px;
+}
+
+.tone-success { color: var(--success); }
+.tone-danger { color: var(--danger); }
+
+.confidence-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.confidence-track {
+  flex: 1;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+.confidence-fill {
+  height: 100%;
+  border-radius: 999px;
+  animation: growBar 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform-origin: left;
+  transform: scaleX(0);
+}
+
+.confidence-fill.tone-success { background: linear-gradient(90deg, var(--success), #6EF0AC); }
+.confidence-fill.tone-danger { background: linear-gradient(90deg, var(--danger), #FF8A8A); }
+
+.confidence-value {
+  font-family: 'Sora', sans-serif;
+  font-weight: 800;
+  font-size: 1.05rem;
+  min-width: 58px;
+  text-align: right;
+}
+
+@keyframes growBar {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.detail-item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detail-label {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.detail-value {
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+/* ---------------- Probability Bars ---------------- */
+.prob-row {
+  display: grid;
+  grid-template-columns: 170px 1fr 60px;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 0;
+}
+
+.prob-row + .prob-row { border-top: 1px solid var(--border); }
+
+.prob-row-top { opacity: 1; }
+.prob-row:not(.prob-row-top) { opacity: 0.75; }
+
+.prob-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+
+.prob-badge {
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--primary);
+  background: rgba(79, 140, 255, 0.12);
+  border: 1px solid rgba(79, 140, 255, 0.35);
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+
+.prob-track {
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+.prob-fill {
+  height: 100%;
+  border-radius: 999px;
+  animation: growBar 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform-origin: left;
+  transform: scaleX(0);
+}
+
+.prob-fill.tone-success { background: linear-gradient(90deg, var(--success), #6EF0AC); }
+.prob-fill.tone-danger { background: linear-gradient(90deg, var(--danger), #FF8A8A); }
+
+.prob-value {
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-align: right;
+}
+
+/* ---------------- Clinical Summary ---------------- */
+.clinical-text {
+  font-size: 0.98rem;
+  line-height: 1.6;
+  margin: 0 0 12px 0;
+}
+
+.clinical-text strong { color: var(--primary); }
+
+.clinical-disclaimer {
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  margin: 0;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+
+/* ---------------- Model Details (expander) ---------------- */
+[data-testid="stExpander"] {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: var(--spacing);
+}
+
+
+[data-testid="stExpander"] summary {
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.model-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  padding-top: 8px;
+  align-items: start;
+}
+
+.model-chip {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 90px;
+  box-sizing: border-box;
+}
+
+.model-label {
+  font-size: 0.68rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.model-value {
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+
+/* ---------------- Footer ---------------- */
+.app-footer {
+  text-align: center;
+  padding: 18px 10px 4px 10px;
+  border-top: 1px solid var(--border);
+  margin-top: 4px;
+}
+
+.app-footer p {
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ---------------- Responsive ---------------- */
+@media (max-width: 900px) {
+  [data-testid="stHorizontalBlock"] {
+    flex-direction: column !important;
+  }
+  [data-testid="stHorizontalBlock"] > div {
+    width: 100% !important;
+  }
+  .st-key-upload_hero { padding: 34px 24px !important; }
+  .hero-title { font-size: 1.6rem; }
+  .model-grid { grid-template-columns: repeat(2, 1fr); }
+  .prob-row { grid-template-columns: 120px 1fr 50px; gap: 10px; }
+}
+
+@media (max-width: 480px) {
+  .app-header { flex-direction: column; align-items: flex-start; }
+  .detail-grid { grid-template-columns: 1fr; }
+  .model-grid { grid-template-columns: 1fr; }
+}

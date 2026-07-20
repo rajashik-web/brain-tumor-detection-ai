@@ -1,0 +1,3 @@
+streamlit>=1.38  # needs st.container(key=...) -> .st-key-<key> CSS class support
+Pillow>=10.0
+requests>=2.31

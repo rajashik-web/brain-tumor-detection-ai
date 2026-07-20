@@ -1,0 +1,25 @@
+# Dataset
+data/
+
+# Uploads
+backend/uploads/
+
+# Training outputs
+model_training/logs/
+model_training/reports/
+
+# Models
+models/
+saved_models/
+*.keras
+*.h5
+*.pt
+*.pth
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Environment
+.env
