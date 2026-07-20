@@ -1,4 +1,14 @@
+<p align="center">
+  <img src="assets/banner.png" alt="Brain Tumor Detection AI Banner" width="100%">
+</p>
+
 # 🧠 Brain Tumor Detection AI
+
+<p align="center">
+
+**An end-to-end AI-powered web application for brain tumor classification from MRI scans using Deep Learning, FastAPI, and Streamlit.**
+
+</p>
 
 <p align="center">
 
