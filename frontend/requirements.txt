@@ -1,3 +1,4 @@
-streamlit>=1.38  # needs st.container(key=...) -> .st-key-<key> CSS class support
+streamlit>=1.38
 Pillow>=10.0
 requests>=2.31
+plotly>=6.0
