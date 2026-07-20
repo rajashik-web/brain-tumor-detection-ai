@@ -11,7 +11,9 @@ model_training/reports/
 # Models
 models/
 saved_models/
+# Ignore all models except the deployed model
 *.keras
+!model_training/saved_models/efficientnet_finetuned.keras
 *.h5
 *.pt
 *.pth
