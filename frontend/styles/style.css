@@ -17,7 +17,7 @@
   --text-secondary: #94A3B8;
   --border: rgba(255, 255, 255, 0.08);
   --radius: 22px;
-  --spacing: 26px;
+  --spacing: 22px;
   --shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
 }
 
@@ -26,7 +26,14 @@ html, body, [class*="css"] {
   color: var(--text);
 }
 
-#MainMenu, footer, header[data-testid="stHeader"] { visibility: hidden; }
+/* display:none (not visibility:hidden) is deliberate: visibility:hidden
+   keeps an element's layout box fully intact — it still reserves space,
+   it just isn't painted. That's version-dependent on whether Streamlit
+   happens to position this header statically or absolutely in your
+   installed version. display:none removes it from layout unconditionally,
+   regardless of its own position property, so this can't regress across
+   Streamlit versions the way visibility:hidden could. */
+#MainMenu, footer, header[data-testid="stHeader"] { display: none !important; }
 
 .stApp {
   background:
@@ -36,10 +43,27 @@ html, body, [class*="css"] {
 }
 
 .block-container {
-  padding-top: 1.6rem;
-  padding-bottom: 2.5rem;
+  /* !important is deliberate: Streamlit's own StyledAppViewBlockContainer
+     sets padding-top to 6rem (96px) internally for every non-embedded
+     app — independent of whether the native header bar is visually
+     hidden. That rule and this one are equal-specificity single-class
+     selectors on the same element, so without !important, whichever
+     <style> tag the browser happens to apply last wins non-deterministically. */
+  padding-top: 1.25rem !important;
+  padding-bottom: 1rem;
   max-width: 1180px;
 }
+
+/* Zero the gap ONLY at the page's root vertical block (the direct
+   child of .block-container, i.e. the sequence of top-level
+   render_*() calls in app.py). Without this, Streamlit's flex `gap`
+   and each card's own `margin-bottom` both apply between top-level
+   cards — gap and margin don't collapse, so they silently added up
+   to ~40px instead of the intended 26px. Nested vertical blocks
+   inside each card (title -> file_uploader -> hint, etc.) are NOT
+   direct children of .block-container, so they keep the gap below
+   for their own internal rhythm. */
+.block-container > div[data-testid="stVerticalBlock"] { gap: 0; }
 
 [data-testid="stVerticalBlock"] { gap: 0.85rem; }
 
@@ -106,7 +130,7 @@ div[data-testid="stVerticalBlockBorderWrapper"]:has(.st-key-clinical_summary) {
   font-family: 'Sora', sans-serif;
   font-weight: 700;
   font-size: 1.02rem;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -120,7 +144,7 @@ div[data-testid="stVerticalBlockBorderWrapper"]:has(.st-key-clinical_summary) {
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 14px;
-  padding: 4px 2px 22px 2px;
+  padding: 4px 2px 14px 2px;
 }
 
 .brand { display: flex; align-items: center; gap: 14px; }
@@ -190,7 +214,7 @@ div[data-testid="stVerticalBlockBorderWrapper"]:has(.st-key-clinical_summary) {
 /* ---------------- Upload Hero ---------------- */
 .st-key-upload_hero {
   text-align: center;
-  padding: 52px 48px !important;
+  padding: 40px 40px !important;
 }
 
 .hero-eyebrow {
@@ -217,7 +241,7 @@ div[data-testid="stVerticalBlockBorderWrapper"]:has(.st-key-clinical_summary) {
   color: var(--text-secondary);
   font-size: 0.98rem;
   max-width: 520px;
-  margin: 0 auto 28px auto;
+  margin: 0 auto 20px auto;
   line-height: 1.6;
 }
 
@@ -231,7 +255,18 @@ div[data-testid="stVerticalBlockBorderWrapper"]:has(.st-key-clinical_summary) {
   background: rgba(79, 140, 255, 0.04) !important;
   border: 1.5px dashed rgba(79, 140, 255, 0.45) !important;
   border-radius: 18px !important;
-  min-height: 180px;
+  min-height: 120px;
+  /* Streamlit's own StyledFileDropzoneSection is a flex ROW with
+     align-items:flex-start (see FileUploadDropzone styled-components)
+     — that pins the Upload button + helper text to the top-left by
+     design. Overriding to a centered COLUMN stacks them centered
+     instead, matching the ChatGPT/Vercel/Linear upload pattern. */
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  gap: 8px !important;
   transition: border-color 0.2s ease, background 0.2s ease;
 }
 
@@ -257,6 +292,26 @@ div[data-testid="stVerticalBlockBorderWrapper"]:has(.st-key-clinical_summary) {
   font-size: 1rem;
   margin-bottom: 16px;
   word-break: break-all;
+}
+
+/* Cap preview image height so a portrait, square, or wide scan all
+   produce roughly the same card height — without this, uploading a
+   differently-shaped scan changes the whole page's vertical rhythm,
+   which reads as the gap between sections "moving" on scroll. */
+.st-key-upload_hero [data-testid="stImage"] img {
+  max-height: 220px;
+  width: 100%;
+  object-fit: contain;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.st-key-scan_preview [data-testid="stImage"] img {
+  max-height: 420px;
+  width: 100%;
+  object-fit: contain;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
 }
 
 /* ---------------- Buttons ---------------- */
@@ -388,7 +443,7 @@ div.stButton > button:disabled { opacity: 0.6; cursor: not-allowed; }
 /* ---------------- Probability Bars ---------------- */
 .prob-row {
   display: grid;
-  grid-template-columns: 170px 1fr 60px;
+  grid-template-columns: minmax(120px, 170px) 1fr 60px;
   align-items: center;
   gap: 16px;
   padding: 10px 0;
@@ -536,11 +591,26 @@ div.stButton > button:disabled { opacity: 0.6; cursor: not-allowed; }
   .st-key-upload_hero { padding: 34px 24px !important; }
   .hero-title { font-size: 1.6rem; }
   .model-grid { grid-template-columns: repeat(2, 1fr); }
-  .prob-row { grid-template-columns: 120px 1fr 50px; gap: 10px; }
+  .prob-row { grid-template-columns: minmax(100px, 120px) 1fr 50px; gap: 10px; }
+  [data-testid="stFileUploaderDropzone"] { min-height: 110px; }
 }
 
 @media (max-width: 480px) {
   .app-header { flex-direction: column; align-items: flex-start; }
   .detail-grid { grid-template-columns: 1fr; }
   .model-grid { grid-template-columns: 1fr; }
+}
+
+html {
+    scroll-behavior: smooth;
+    overscroll-behavior-y: none;
+}
+
+body {
+    margin: 0;
+    overscroll-behavior-y: none;
+}
+
+.stApp {
+    overscroll-behavior-y: none;
 }

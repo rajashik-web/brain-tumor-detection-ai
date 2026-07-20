@@ -42,11 +42,9 @@ def render_upload_hero() -> None:
             label_visibility="collapsed",
             key="hero_uploader",
         )
-
-        # Streamlit's own default upload limit is 200MB unless the
-        # deployment overrides server.maxUploadSize — stated here as
-        # a genuine platform default, not an arbitrary number.
-        render_html('<p class="hero-hint">PNG or JPG &middot; up to 200MB</p>')
+        # No extra hint paragraph here: Streamlit's own dropzone already
+        # shows "Limit 200MB per file • PNG, JPG, JPEG" — repeating it
+        # in a second line of text was redundant clutter, not polish.
 
         if uploaded_file is not None:
             _render_ready_state(uploaded_file)
@@ -55,11 +53,29 @@ def render_upload_hero() -> None:
 
 
 def _render_ready_state(uploaded_file) -> None:
-    """Show the selected scan alongside the Analyze button."""
-    image = Image.open(uploaded_file)
+    """Show the selected scan alongside the Analyze button.
+
+    The file extension filter on st.file_uploader only checks the
+    filename, not the actual content — a renamed or corrupted file
+    can still reach here and make PIL raise. Without this guard that
+    would surface as a raw Python traceback instead of a clean
+    in-app error message.
+    """
+    try:
+        image = Image.open(uploaded_file)
+        image.verify()
+        uploaded_file.seek(0)
+        image = Image.open(uploaded_file)  # re-open: verify() consumes the file
+    except Exception:  # noqa: BLE001 - any decode failure means "not a valid image"
+        st.error(
+            f"'{uploaded_file.name}' couldn't be read as an image. "
+            "Please upload a valid PNG or JPG file."
+        )
+        return
+
     image_bytes = uploaded_file.getvalue()
 
-    preview_col, action_col = st.columns([1, 1.3], gap="large")
+    preview_col, action_col = st.columns([1, 1.3], gap="large", vertical_alignment="center")
     with preview_col:
         st.image(image, use_container_width=True)
     with action_col:

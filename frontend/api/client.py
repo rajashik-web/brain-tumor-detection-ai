@@ -11,12 +11,14 @@ from __future__ import annotations
 from typing import Any, Dict
 
 import requests
+import streamlit as st
 
 API_BASE_URL = "http://localhost:8000"
 PREDICT_ENDPOINT = f"{API_BASE_URL}/predict"
 
 PREDICT_TIMEOUT_SECONDS = 30
 HEALTH_TIMEOUT_SECONDS = 2
+HEALTH_CACHE_TTL_SECONDS = 5
 
 
 def predict_tumor(image_bytes: bytes, filename: str = "scan.png") -> Dict[str, Any]:
@@ -51,13 +53,16 @@ def predict_tumor(image_bytes: bytes, filename: str = "scan.png") -> Dict[str, A
     return response.json()
 
 
+@st.cache_data(ttl=HEALTH_CACHE_TTL_SECONDS, show_spinner=False)
 def check_backend_status() -> bool:
     """
     Check whether the FastAPI backend is reachable.
 
     Used only to drive the header's live "Backend Online/Offline" pill —
     a genuine reachability check with a short timeout, not a fabricated
-    or hardcoded badge.
+    or hardcoded badge. Cached for a few seconds so it doesn't fire a
+    real network request (and its latency) on every single rerun —
+    every button click and st.rerun() would otherwise re-check it.
 
     Returns:
         True if the server responded at all, False on any connection
